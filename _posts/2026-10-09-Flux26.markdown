@@ -1,0 +1,60 @@
+---
+title: "Flux 26: Identifying Causal Mechanisms in Neurodevelopment and Mental Health"
+layout: post
+date: 2026-10-10 15:00
+#tag: jekyll
+# image: /assets/proj_imgs/spatialcognition/img1.png
+headerImage: true
+projects: true
+hidden: true # don't count this post in blog pagination
+description: "Identifying Causal Mechanisms in Neurodevelopment and Mental Health"
+category: project
+# author: johndoe
+externalLink: false
+---
+## Symposium: Identifying Causal Mechanisms in Neurodevelopment and Mental Health
+
+
+#### [Sylvia Lin](https://www.sylvia-lin.com/), [Kathryn Bates](https://www.kathrynbates.com/), & [Floor Vandecruys](https://ppw.kuleuven.be/pserg/psergstaff/00133915)
+
+
+
+**Slide Deck**:
+
+<iframe src="https://docs.google.com/file/d/1EzaxuTKZ9y_B_u38oB_iVtRbwuqVgk7X/preview" width="560" height="310" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+
+
+
+
+## Open-source causal inference literature
+
+
+#### Text books
+Good book to start:
+
+- [The effect: an introduction to research design and causality](https://theeffectbook.net/) by Nick Huntington-Klein.
+
+Middle road
+
+- [Causal Inference: The Mixtape](https://mixtape.scunning.com/) by Scott Cunningham.
+
+More advanced:
+
+- [Causal Inference: What if?](https://www.hsph.harvard.edu/miguel-hernan/wp-content/uploads/sites/1268/2024/04/hernanrobins_WhatIf_26apr24.pdf) by Miguel Hernan & James Robins.
+
+## Applied methods PhD course by Paul Goldsmith-Pinkham
+
+- [github](https://github.com/paulgp/applied-methods-phd)
+- [youtube](https://www.youtube.com/playlist?list=PLWWcL1M3lLlojLTSVf2gGYQ_9TlPyPbiJ)
+
+- Cattaneo, M. D., Idrobo, N., & Titiunik, R. (2019). A practical introduction to regression discontinuity designs: Foundations. [pdf](https://arxiv.org/abs/1911.09511)
+- Cattaneo, M. D., Idrobo, N., & Titiunik, R. (2023). A Practical Introduction to Regression Discontinuity Designs: Extensions.  [pdf](http://arxiv.org/abs/2301.08958)
+
+
+## Other relevant literature
+- Schwartz, G. L., & Maria Glymour, M. (2023). Bridging the Divide: Tackling Tensions Between Life-Course Epidemiology and Causal Inference. Annual Review of Developmental Psychology, 5(Volume 5, 2023), 355–374. [pdf](https://paperpile.com/shared/JtXhgQ)
+
+
+
+
+
