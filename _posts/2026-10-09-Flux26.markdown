@@ -55,10 +55,10 @@ externalLink: false
 </div>
 ## Relevant literature
 
-- Bailey, D. H., Jung, A. J., Beltz, A. M., Eronen, M. I., Gische, C., Hamaker, E. L., Kording, K. P., Lebel, C., Lindquist, M. A., Moeller, J., Razi, A., Rohrer, J. M., Zhang, B., & Murayama, K. (2024). Causal inference on human behaviour. *Nature Human Behaviour*, *8*(8), 1448–1459.[pdf](https://paperpile.com/shared/sH6cwsMEPTaub0XeD~64xcg)
-- Anvari, F., Kievit, R., Lakens, D., Pennington, C. R., Przybylski, A. K., Tiokhin, L., Wiernik, B. M., & Orben, A. (2022). Not All Effects Are Indispensable: Psychological Science Requires Verifiable Lines of Reasoning for Whether an Effect Matters. *Perspectives on Psychological Science: A Journal of the Association for Psychological Science*, 17456916221091565. [pdf](https://paperpile.com/shared/sPX9FKpC7TE~p1M0UoVGSHg)
-- Lundberg, I., Johnson, R., & Stewart, B. M. (2021). What Is Your Estimand? Defining the Target Quantity Connects Statistical Evidence to Theory. *American Sociological Review*, *86*(3), 532–565 [pdf](https://paperpile.com/shared/sS4QN4DpLQOCraVmHoFWkEQ)
-- Schwartz, G. L., & Maria Glymour, M. (2023). Bridging the Divide: Tackling Tensions Between Life-Course Epidemiology and Causal Inference. Annual Review of Developmental Psychology, 5(Volume 5, 2023), 355–374. [pdf](https://paperpile.com/shared/JtXhgQ)
+- Bailey, D. H., Jung, A. J., Beltz, A. M., Eronen, M. I., Gische, C., Hamaker, E. L., Kording, K. P., Lebel, C., Lindquist, M. A., Moeller, J., Razi, A., Rohrer, J. M., Zhang, B., & Murayama, K. (2024). **Causal inference on human behaviour**. *Nature Human Behaviour*, *8*(8), 1448–1459.[pdf](https://paperpile.com/shared/sH6cwsMEPTaub0XeD~64xcg)
+- Anvari, F., Kievit, R., Lakens, D., Pennington, C. R., Przybylski, A. K., Tiokhin, L., Wiernik, B. M., & Orben, A. (2022). **Not All Effects Are Indispensable: Psychological Science Requires Verifiable Lines of Reasoning for Whether an Effect Matters**. *Perspectives on Psychological Science: A Journal of the Association for Psychological Science*, 17456916221091565. [pdf](https://paperpile.com/shared/sPX9FKpC7TE~p1M0UoVGSHg)
+- Lundberg, I., Johnson, R., & Stewart, B. M. (2021). **What Is Your Estimand? Defining the Target Quantity Connects Statistical Evidence to Theory**. *American Sociological Review*, *86*(3), 532–565 [pdf](https://paperpile.com/shared/sS4QN4DpLQOCraVmHoFWkEQ)
+- Schwartz, G. L., & Maria Glymour, M. (2023). **Bridging the Divide: Tackling Tensions Between Life-Course Epidemiology and Causal Inference.** Annual Review of Developmental Psychology, 5(Volume 5, 2023), 355–374. [pdf](https://paperpile.com/shared/JtXhgQ)
 
 
 
