@@ -1,5 +1,5 @@
 ---
-title: "Flux 26: Identifying Causal Mechanisms in Neurodevelopment and Mental Health"
+title: "Flux Symposium 2026"
 layout: post
 date: 2026-09-09 13:00
 #tag: jekyll
@@ -12,7 +12,7 @@ category: project
 # author: johndoe
 externalLink: false
 ---
-## Symposium: Identifying Causal Mechanisms in Neurodevelopment and Mental Health
+# Identifying Causal Mechanisms in Neurodevelopment and Mental Health
 
 
 #### [Sylvia Lin](https://www.sylvia-lin.com/), [Kathryn Bates](https://www.kathrynbates.com/), & [Floor Vandecruys](https://ppw.kuleuven.be/pserg/psergstaff/00133915)
