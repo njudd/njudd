@@ -14,11 +14,11 @@ externalLink: false
 ---
 # Identifying Causal Mechanisms in Neurodevelopment and Mental Health
 
-### Sylvia Lin
+## Sylvia Lin
+
+### A Randomised Controlled Trial on the Impact of Parenting on Adolescent Emotion Regulation-Related Brain Function and Mental Health
 
 [Website](https://www.sylvia-lin.com/) & [Contact](mailto:sylvia.lin@deakin.edu.au)
-
-**Slide Deck**: A Randomised Controlled Trial on the Impact of Parenting on Adolescent Emotion Regulation-Related Brain Function and Mental Health
 
 [Open slides in a new tab](/assets/slides/SL_Flux2026_Lin_Final.pdf) (recommended on mobile)
 
@@ -27,15 +27,12 @@ externalLink: false
           style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid #CCC;"
           frameborder="0" scrolling="no" allowfullscreen> </iframe>
 </div>
+## Kathryn Bates 
 
-
-
-### Kathryn Bates 
+### Testing the impact of cash transfers
+on youth using ABCD
 
 [Website](https://www.kathrynbates.com/) & [Contact](mailto:kathryn.2.bates@kcl.ac.uk)
-
-**Slide Deck**: Testing the impact of cash transfers
-on youth using ABCD
 
 [Open slides in a new tab](/assets/slides/KB_Flux2026_ExpandedCTC_V2.pdf) (recommended on mobile)
 
@@ -44,14 +41,11 @@ on youth using ABCD
           style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid #CCC;"
           frameborder="0" scrolling="no" allowfullscreen> </iframe>
 </div>
+## Floor Vandecruys
 
-
-
-### Floor Vandecruys
+### Schooling drives neurocognitive development
 
 [Website](https://ppw.kuleuven.be/pserg/psergstaff/00133915) & [Contact](mailto:floor.vandecruys@kuleuven.be)
-
-**Slide Deck**: Schooling drives neurocognitive development
 
 [Open slides in a new tab](/assets/slides/Floor_FLUX_Schooling%20drives%20neurocognitive%20development.pdf) (recommended on mobile)
 
