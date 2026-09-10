@@ -14,14 +14,36 @@ externalLink: false
 ---
 # Identifying Causal Mechanisms in Neurodevelopment and Mental Health
 
+### Sylvia Lin
 
-#### [Sylvia Lin](https://www.sylvia-lin.com/), [Kathryn Bates](https://www.kathrynbates.com/), & [Floor Vandecruys](https://ppw.kuleuven.be/pserg/psergstaff/00133915)
+[Website](https://www.sylvia-lin.com/) & [Contact](mailto:sylvia.lin@deakin.edu.au)
 
-
-
-**Slide Deck**:
+**Slide Deck**: A Randomised Controlled Trial on the Impact of Parenting on Adolescent Emotion Regulation-Related Brain Function and Mental Health
 
 <iframe src="https://link" width="560" height="310" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+
+
+
+### Kathryn Bates 
+
+[Website](https://www.kathrynbates.com/) & [Contact](mailto:kathryn.2.bates@kcl.ac.uk)
+
+**Slide Deck**: Testing the impact of cash transfers
+on youth using ABCD
+
+<iframe src="https://su.drive.sunet.se/s/RE8MqQK2LCB7yRs?dir=/&editing=false&openfile=true" width="560" height="310" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+
+
+
+### Floor Vandecruys
+
+[Website](https://ppw.kuleuven.be/pserg/psergstaff/00133915) & [Contact](mailto:floor.vandecruys@kuleuven.be)
+
+**Slide Deck**: Schooling drives neurocognitive development
+
+<iframe src="https://link" width="560" height="310" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+
+
 
 
 
