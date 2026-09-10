@@ -29,8 +29,7 @@ externalLink: false
 </div>
 ## Kathryn Bates 
 
-### Testing the impact of cash transfers
-on youth using ABCD
+### Testing the impact of cash transfers on youth using ABCD
 
 [Website](https://www.kathrynbates.com/) & [Contact](mailto:kathryn.2.bates@kcl.ac.uk)
 
