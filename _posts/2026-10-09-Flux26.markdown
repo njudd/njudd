@@ -20,7 +20,7 @@ externalLink: false
 
 **Slide Deck**: A Randomised Controlled Trial on the Impact of Parenting on Adolescent Emotion Regulation-Related Brain Function and Mental Health
 
-<iframe src="https://link" width="560" height="310" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+<iframe src="https://drive.google.com/file/d/17lfIL14tFdY1Mu7a6mYbPd9Hq8lkDhRN/preview" width="560" height="310" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
 
 
 
@@ -31,7 +31,9 @@ externalLink: false
 **Slide Deck**: Testing the impact of cash transfers
 on youth using ABCD
 
-<iframe src="https://su.drive.sunet.se/s/RE8MqQK2LCB7yRs?dir=/&editing=false&openfile=true" width="560" height="310" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+<iframe src="/assets/slides/KB_Flux2026_ExpandedCTC_V2.pdf#view=FitH" width="560" height="310" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+
+[Open slides in a new tab](/assets/slides/KB_Flux2026_ExpandedCTC_V2.pdf) (recommended on mobile)
 
 
 
