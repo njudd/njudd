@@ -1,0 +1,516 @@
+---
+title: "No free lunch: The perils of two-timepoint change in non-randomized designs"
+subtitle: "Residualized Change vs. Change Scores in the presence of measurement error"
+author:
+  - name: Nicholas Judd
+    affiliation: Stockholm University
+    orcid: 0000-0002-0196-9871
+date: 2026-06-01
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    embed-resources: true
+    theme: cosmo
+execute:
+  warning: false
+  message: false
+  cache: false
+---
+## Theoretical Background
+
+To measure human behavior we use tasks or questionnaires in an attempt to measure hypothesized underlying latent constructs (e.g., cognitive ability, personality, or psychiatric disorders). This makes it near impossible to measure human behavior without error - any observed score is a noisy proxy of the underlying true value — contaminated by factors such as task/measurement reliability, participant state, and sampling variability (for a full theoretical account of error see [van Bork et al., 2024](https://pure.uva.nl/ws/files/225768640/00060744-202408000-00010.pdf)).
+
+**Notation.** Following classical test theory (CTT), $T$ denotes the *true* (latent) score and $Y$ denotes the *observed* (measured) score, so that $Y_1 = T_1 + \varepsilon$. Subscripts refer to the measurement occasion.
+
+$$Y_1 = T_1 + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+$$Y_2 = T_1 + \Delta{T} + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+```{r delta-concept-plot, fig.width=5.5, fig.height=4.5, fig.align='center', echo=FALSE}
+library(ggplot2)
+t1_y <- 2.5
+t2_y <- 6.4
+
+ggplot(data.frame(x = c(1, 3), y = c(t1_y, t2_y)), aes(x = x, y = y)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 5.5) +
+  annotate("segment", x = 1, xend = 3, y = t1_y, yend = t1_y,
+           linetype = "dashed", color = "#2c7bb6", linewidth = 1.0) +
+  annotate("segment", x = 3, xend = 3, y = t1_y, yend = t2_y,
+           linetype = "dashed", color = "#2c7bb6", linewidth = 1.0) +
+  annotate("text", x = 2, y = t1_y + 0.55,
+           label = expression(Delta*T == T[2] - T[1]),
+           hjust = 0.5, size = 5, color = "#2c7bb6") +
+  scale_x_continuous(breaks = c(1, 3), labels = c("T1", "T2"),
+                     limits = c(0.7, 4.0)) +
+  scale_y_continuous(limits = c(0, 8.5), labels = NULL, breaks = NULL) +
+  labs(y = "Y", x = NULL) +
+  theme_classic(base_size = 16) +
+  theme(
+    axis.title.y = element_text(angle = 0, vjust = 0.5, face = "italic"),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),
+    axis.line = element_blank()
+  )
+```
+
+Measurement error (ε) is the rule, not the exception. This makes it very difficult to measure the change in a construct over time, as our first measurement ($Y_1$) does not fully capture the true score at that point in time; it is simply a proxy, and the degree to which it tracks the true latent construct depends on the reliability of the measure.
+
+This document demonstrates how residualized change (also known as ANCOVA of change) and change scores (also a paired T-test) behave differently in non-randomized contexts.
+
+The **change score** approach first computes a difference score and then regresses it on the predictor:
+
+$$\Delta Y = Y_2 - Y_1$$
+
+$$\Delta Y = b_0 + b_1 X$$
+
+The **residualized change** approach instead regresses $X$ directly on $Y_2$ while statistically controlling for $Y_1$:
+
+$$Y_2 = b_0 + b_1 X + b_2 Y_1$$
+
+The crucial difference of these two analyses is that they differ in their outcome: for the change score approach the outcome is $\Delta Y$, while in residualized change it is $Y_2$. As we will demonstrate this distinction matters when the baseline, prior score ($Y_1$) is measured with noise and has an existing (cross-sectional) relationship with an independent variable of interest (i.e., $X$).
+
+Prior work has highlight that residual change analysis in non-randomized designs leads to **consistent and strong false positives**, yet despite numerous papers, the method remains prevalent in empirical articles without randomized designs (for a brief selection see: [van Breukelen, 2006](https://www.sciencedirect.com/science/article/pii/S0895435606000813); [Castro Schilo & Grimm, 2018](https://journals.sagepub.com/doi/full/10.1177/0265407517718387); [Tennant et al., 2023](https://arxiv.org/abs/2302.01822)). This document is not a full simulation of how the $Y_1$–$Y_2$ correlation modulates residualized change estimates; it simply illustrates the basic mechanics. For a great post on how residualized change adds power in RCT designs see [this blog post](https://solomonkurz.netlify.app/blog/2022-06-13-just-use-multilevel-models-for-your-pre-post-rct-data/).
+
+::: {.callout-note collapse="true"}
+## Bonus points on residualization
+According to the Frisch-Waugh-Lovell theorem, if we residualize $Y_2$ for $Y_1$ and also residualize $X$ for $Y_1$ the effect of $b_1$ is identical in the following two equations:
+
+$$Y_2 = b_0 + b_1 X + b_2 Y_1$$
+
+$$Y_{2,\text{res}} = b_0 + b_1 X_{\text{res}}$$
+
+See [my post](https://www.njudd.com/std_residualization) on how if you only residualize your outcome (Y) it will *1)* change the relationship of X on Y and *2)* mess with the size of your standardized effects. Moreover (regressing $Y_1$ on $\Delta Y$ is algebraically equivalent to regressing $Y_2$ on $Y_1$), see [Castro Schilo & Grimm, 2018](https://journals.sagepub.com/doi/full/10.1177/0265407517718387) or see my [code gist](https://gist.github.com/njudd/4a2c53490eb4353cda29426e431be6ad).
+:::
+
+```{r setup}
+rm(list = ls())
+if (!require(pacman)) install.packages("pacman")
+options(scipen = 999)
+pacman::p_load(tidyverse, data.table, MASS, QuantPsyc, modelsummary, tinytable, patchwork, ggrain)
+```
+
+```{r params}
+n      <- 1000
+n_reps <- 1000
+r <- 0.4  # baseline correlation: ability ~ skill use
+d <- 0    # no true relationship between X and change
+
+set.seed(33)
+s <- matrix(c(1, r, 0,
+              r, 1, d,
+              0, d, 1), nrow = 3)
+# rows/cols: 1 = T1, 2 = X (skill use), 3 = delta (change)
+```
+
+```{r sim-desc-data, echo=FALSE}
+set.seed(33)
+.d <- as.data.frame(mvrnorm(n, mu = c(0, 0, 0), Sigma = s))
+colnames(.d) <- c("T1", "X", "delta")
+setDT(.d)
+tb_prev <- .d[, .(T1, X, delta)]
+set.seed(89); tb_prev$T1_measure1 <- tb_prev$T1 + rnorm(nrow(tb_prev), 0, 0.7)
+set.seed(9);  tb_prev$T1_measure2 <- tb_prev$T1 + rnorm(nrow(tb_prev), 0, 0.7)
+
+tb_prev$T2           <- tb_prev$T1_measure2 + tb_prev$delta
+tb_prev$sub_delta    <- tb_prev$T2 - tb_prev$T1_measure1
+tb_prev              <- as.data.frame(tb_prev)
+tb_prev$resid_change <- resid(lm(T2 ~ T1_measure1, data = tb_prev))
+rm(.d)
+```
+
+#### These two approaches are highly related & usually correlated, what matters is the how the variance that is left is related to an IV (X)
+
+```{r sim-desc-cor-plot, fig.width=7, fig.height=7, fig.align='center'}
+r_prev <- round(cor(tb_prev$sub_delta, tb_prev$resid_change), 2)
+
+ggplot(tb_prev, aes(x = sub_delta, y = resid_change)) +
+  geom_point(alpha = 0.25, size = 1.2) +
+  geom_smooth(method = "lm", se = TRUE, color = "#2166ac", fill = "#2166ac") +
+  annotate("text", x = Inf, y = -Inf, hjust = 1.1, vjust = -0.8,
+           label = paste0("r = ", r_prev), size = 4.5) +
+  labs(title = "Correlation of both approaches", subtitle = "False positive's are with the relationship to a IV (X)",
+       x = "ΔY (Y2 − Y1)\n with measurement noise",
+       y = "Residualized change (Y2,res)\n with measurement noise") +
+  theme_minimal(base_size = 13)
+```
+
+## Simulation description
+
+Here we are interested in the relationship of an IV (X) with change in Y overtime (ΔY). In [Case 1](#sec-case1) we simulate without measurement error and in [Case 2](#sec-case2) we add measurement error.
+
+The following conditions hold:
+
+1. A baseline relationship between $X$ and $Y_1$ of 0.4 (this is the cross-sectional association and not the estimand of interest)
+2. We simulate a case where $X$ **does not** predict longitudinal change in $Y_2$ (ΔT = 0)
+3. $T_2 = T_1 + \Delta T$
+
+```{r cor-matrix-plot, fig.width=4, fig.height=4, fig.align='center'}
+as.data.frame(s) |>
+  setNames(c("T1", "X", "ΔT")) |>
+  mutate(var1 = c("T1", "X", "ΔT")) |>
+  pivot_longer(-var1, names_to = "var2", values_to = "r") |>
+  mutate(var1 = factor(var1, levels = c("ΔT", "X", "T1")),
+         var2 = factor(var2, levels = c("T1", "X", "ΔT"))) |>
+  ggplot(aes(x = var2, y = var1, fill = r)) +
+  geom_tile(color = "white", linewidth = 0.8) +
+  geom_text(aes(label = round(r, 2)), size = 5) +
+  scale_fill_gradient2(low = "#d73027", mid = "white", high = "#2166ac",
+                       midpoint = 0, limits = c(-1, 1)) +
+  labs(x = NULL, y = NULL, fill = "r",
+       title = "Population correlation matrix") +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+```
+
+
+We draw *n* = 1000 observations from a multivariate normal distribution with three variables:
+
+- baseline true ability ($T_1$),
+- a predictor of interest (X, representing skill use),
+- and true change in ability (ΔT), which has no relation with $T_1$ or $X$
+
+To reflect a baseline relationship, $T_1$ and $X$ are correlated positively (*r* = 0.4) — those with higher ability at baseline also tend to show higher skill use (X). [Critically, $ΔT$ is uncorrelated with both $T_1$ and X: nothing is actually happening over time, so any apparent effect of X on change must be spurious due to the baseline relationship.]{.mark}
+
+The follow-up true score $T_2$ is simply the sum of baseline true ability ($T_1$, without measurement error in this case) and true change:
+
+$$T_2 = T_1 + \Delta{T}$$
+
+This means the only source of genuine longitudinal signal in $T_2$ is $ΔT$, which is independent of X by design. Any model that recovers a non-zero effect of X on $T_2$ (or on change) is therefore producing a false positive.
+
+Later on, in [Case 2](#sec-case2) we illustrate the effect of measurement error by adding random Gaussian noise to the true score $T_1$ to get two imperfect observed measures of baseline ability. In [Case 3](#sec-case3) we sweep across $\sigma^2$ values to quantify how the proportion of measurement noise affects the bias.
+
+## Case 1: $Y_1$ perfectly measured (no measurement error) {#sec-case1}
+
+When there is no measurement error (i.e., observed = true, $Y_1 = T_1$ & $Y2 = T_1 + ΔT$), change scores and residualized change give the same (correct) answer. This makes intuitive sense as we can perfectly control for the $T_1$ within the second time point $Y_2$.
+
+**No effect of X on change** Illustrated by the lack of significance of X on the model table below.
+
+```{r perfect-t1}
+set.seed(30)
+dat2 <- as.data.frame(mvrnorm(n, mu = c(0, 0, 0), Sigma = s))
+colnames(dat2) <- c("T1", "X", "delta")
+dat2$T2        <- dat2$T1 + dat2$delta
+dat2$sub_delta <- dat2$T2 - dat2$T1
+
+m_perfect <- list(
+  "Change score" = lm(sub_delta ~ X,  data = dat2),
+  "Residualized" = lm(T2 ~ X + T1,   data = dat2)
+)
+
+sig_rows <- {
+  df <- modelsummary(m_perfect, statistic = NULL, stars = TRUE, output = "dataframe")
+  which(df[["term"]] == "X" & apply(df[, -(1:2), drop = FALSE], 1, function(x) any(grepl("\\*", x))))
+}
+
+modelsummary(m_perfect,
+  statistic = NULL,
+  stars     = TRUE,
+  gof_map   = c("nobs", "r.squared", "adj.r.squared")
+) |>
+  style_tt(i = sig_rows, bold = TRUE)
+```
+
+Both models recover the null effect (β ≈ 0) because $Y_1$ is perfectly captured ($Y_1 = T_1$). The intercept-only variance in $Y_2$ after removing $Y_1$ is purely Δ, which is uncorrelated with X by design.
+
+## Case 2: Allowing measurment error (adding noise to $Y_1$) {#sec-case2}
+
+In practice, baseline scores are measured with error. Here we add Gaussian noise ($\sigma^2$ = 0.7) to the true score $T_1$ to create two imperfect observed measurements of baseline ability.
+
+- $\boldsymbol{Y_{1,m1}}$ — the baseline observed measurement used as a predictor or to subtract
+
+$$Y_{1,m1} = T_1 + \varepsilon_1, \quad \varepsilon_1 \sim \mathcal{N}(0, \sigma^2)$$
+
+- $\boldsymbol{Y_{1,m2}}$ — a second observed measurement used to construct $Y_2$
+
+$$Y_{1,m2} = T_1 + \varepsilon_2, \quad \varepsilon_2 \sim \mathcal{N}(0, \sigma^2)$$
+
+Note, both of these reflect an imperfect measure of the latent true score $T_1$. $Y_{1,m2}$ is not simulating test–retest noise by adding noise to $Y_{1,m1}$ — rather both reflect the reality that we cannot perfectly measure the latent construct at baseline. Our observed follow-up score $Y_2$ then becomes:
+
+$$Y_2 = Y_{1,m2} + \Delta T$$
+```{r noisy-t1-setup}
+setDT(dat2)
+true_base <- dat2[, .(T1, X, delta)]
+
+sd_val <- 0.7
+
+set.seed(892)
+true_base$T1_measure1 <- true_base$T1 + rnorm(nrow(true_base), 0, sd_val)
+set.seed(12)
+true_base$T1_measure2 <- true_base$T1 + rnorm(nrow(true_base), 0, sd_val)
+```
+
+To clarify, $Y_2$ is the amount of true change (ΔT) plus an imperfect observation of the baseline true score ($Y_{1,m2}$). In practice, $ΔT$ is also measured with error (i.e., $ΔY$) yet as we are simulating the null ($ΔT$ = 0) and it is not needed for this example we will ignore it for now.
+
+This makes our observed change equation:
+
+$$\Delta Y = Y_2 - Y_{1,m1}$$
+
+The change score model is then:
+
+$$\Delta Y_m = b_0 + b_1 X$$
+
+And the residualized change model:
+
+$$Y_2 = b_0 + b_1 X + b_2 Y_{1,m1}$$
+
+Writing these equations out hopefully clarifies the role of measurement error, and makes explicit the issues of residual confounding. In this toy example the two noisy observed measures of baseline ability correlate: `r round(cor(true_base$T1_measure1, true_base$T1_measure2), 2)`, below in [Case 3](#sec-case3) we will vary the amount of noise.
+
+```{r noisy-t1}
+true_base$T2        <- true_base$T1_measure2 + true_base$delta
+true_base$sub_delta <- true_base$T2 - true_base$T1_measure1
+
+m_noisy <- list(
+  "Change score"       = lm(sub_delta ~ X,        data = true_base),
+  "Resid. (noisy Y1)"  = lm(T2 ~ X + T1_measure1, data = true_base),
+  "Resid. (true T1)"   = lm(T2 ~ X + T1,          data = true_base)
+)
+
+sig_rows <- {
+  df <- modelsummary(m_noisy, statistic = NULL, stars = TRUE, output = "dataframe")
+  which(df[["term"]] == "X" & apply(df[, -(1:2), drop = FALSE], 1, function(x) any(grepl("\\*", x))))
+}
+
+modelsummary(m_noisy,
+  statistic   = NULL,
+  stars       = TRUE,
+  gof_map     = c("nobs", "r.squared", "adj.r.squared"),
+  coef_rename = c("T1_measure1" = "Y1,m1 (noisy)", "T1" = "T1 (true)")
+) |>
+  style_tt(i = sig_rows, bold = TRUE)
+```
+
+The residualized change model with the **noisy** $Y_{1,m1}$ measure now shows a spurious positive effect of X. Because $Y_{1,m1}$ doesn't fully partial out the true baseline score $T_1$, and X is correlated with $T_1$, the coefficient for X absorbs that residual variance.
+
+```{r case2-plot, fig.width=9, fig.height=4.5}
+tb <- as.data.frame(true_base)
+tb$resid_change <- resid(lm(T2 ~ T1_measure1, data = tb))
+
+bind_rows(
+  data.frame(X = tb$X, y = tb$sub_delta,     approach = "Change score  (ΔY = b0 + b1·X)"),
+  data.frame(X = tb$X, y = tb$resid_change,  approach = "Residualized change (Y2 = b0 + b1·X + b2·Y1)")
+) |>
+  ggplot(aes(x = X, y = y)) +
+  geom_point(alpha = 0.25, size = 1.2) +
+  geom_smooth(method = "lm", se = TRUE, color = "#d73027", fill = "#d73027") +
+  facet_wrap(~approach, scales = "free_y") +
+  labs(x = "X (skill use)", y = NULL) +
+  theme_minimal(base_size = 13)
+```
+
+#### Lets make sure this holds by replicating it a 1000 times
+
+```{r plot-pval-density, fig.width=8, fig.height=5}
+set.seed(2027)
+pval_sd <- 0.7
+
+pval_reps <- replicate(n_reps, {
+  sim <- as.data.frame(mvrnorm(n, mu = c(0, 0, 0), Sigma = s))
+  colnames(sim) <- c("T1", "X", "delta")
+  sim$T1_m1  <- sim$T1 + rnorm(n, 0, pval_sd)
+  sim$T1_m2  <- sim$T1 + rnorm(n, 0, pval_sd)
+  sim$T2     <- sim$T1_m2 + sim$delta
+  sim$change <- sim$T2 - sim$T1_m1
+  m_cs <- lm(change ~ X,      data = sim)
+  m_rn <- lm(T2 ~ X + T1_m1, data = sim)
+  m_rt <- lm(T2 ~ X + T1,    data = sim)
+  c(
+    pval_change_score = summary(m_cs)$coefficients["X", "Pr(>|t|)"],
+    pval_resid_noisy  = summary(m_rn)$coefficients["X", "Pr(>|t|)"],
+    pval_resid_true   = summary(m_rt)$coefficients["X", "Pr(>|t|)"]
+  )
+})
+
+pval_df <- data.frame(
+  p     = c(pval_reps["pval_change_score", ],
+            pval_reps["pval_resid_noisy",  ],
+            pval_reps["pval_resid_true",   ]),
+  model = rep(c("Change score", "Residualized (noisy Y1)", "Residualized (true T1)"),
+              each = n_reps)
+)
+
+p1 <- ggplot(pval_df, aes(x = p, fill = model, color = model)) +
+  geom_density(alpha = 0.3, linewidth = 0.8) +
+  geom_vline(xintercept = 0.05, linetype = "dashed", color = "grey40") +
+  annotate("text", x = 0.06, y = 14, vjust = 1.5, hjust = 0,
+           label = "α = .05", color = "grey40", size = 3.5) +
+  scale_x_continuous(limits = c(0, 1)) +
+  scale_color_manual(values = c("#2166ac", "#d73027", "#4dac26")) +
+  scale_fill_manual( values = c("#2166ac", "#d73027", "#4dac26")) +
+  labs(
+    x        = "p-value for X",
+    y        = "Density",
+    color    = NULL, fill = NULL,
+    title    = "P-value distributions under the null",
+    subtitle = sprintf("SD of noise = %.1f  |  %d reps  |  n = %d", pval_sd, n_reps, n)
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = c(0.95, 0.95),
+        legend.justification = c("right", "top"))
+
+p2 <- pval_df |>
+  group_by(model) |>
+  summarise(pct_sig = mean(p < 0.05) * 100, .groups = "drop") |>
+  ggplot(aes(x = model, y = pct_sig, fill = model)) +
+  geom_col(width = 0.6) +
+  geom_hline(yintercept = 5, linetype = "dashed", color = "grey40") +
+  annotate("text", x = 0.6, y = 9, label = "α = .05",
+           color = "grey40", size = 3.5, hjust = 0) +
+  scale_fill_manual(values = c("#2166ac", "#d73027", "#4dac26")) +
+  scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 12)) +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(x = NULL, y = "% p < .05", title = "False positive rate") +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "none")
+
+p1 + p2 + plot_layout(widths = c(3, 3))
+
+```
+
+## Case 3: Monte Carlo simulation across noise ($\sigma^2$) levels {#sec-case3}
+
+To quantify how this bias relates to measurement error, we sweep $\sigma^2$ (`sd_val`) from 0 to 2 in steps of .1 and run `r n_reps` replications at each level, extracting the standardized β for X from each model using `lm.beta`. $Y_{1,m1}$ & $Y_{1,m2}$ have the same $\sigma^2$ values per sweep.
+
+$$Y_{1,m1} = T_1 + \varepsilon_1, \quad \varepsilon_1 \sim \mathcal{N}(0, \sigma^2)$$
+
+$$Y_{1,m2} = T_1 + \varepsilon_2, \quad \varepsilon_2 \sim \mathcal{N}(0, \sigma^2)$$
+
+```{r monte-carlo}
+sd_range  <- seq(0, 2, by = 0.1)
+set.seed(2026)
+
+beta_rows <- c("change_score.X", "resid_noisy.X", "resid_true.X")
+cor_rows  <- c("cor_m1_T1", "cor_m2_T1", "cor_m1_m2", "cor_m1_X", "cor_m2_X")
+
+sim_results <- lapply(sd_range, function(noise_sd) {
+  reps <- replicate(n_reps, {
+    sim <- as.data.frame(mvrnorm(n, mu = c(0, 0, 0), Sigma = s))
+    colnames(sim) <- c("T1", "X", "delta")
+    sim$T1_m1  <- sim$T1 + rnorm(n, 0, noise_sd)
+    sim$T1_m2  <- sim$T1 + rnorm(n, 0, noise_sd)
+    sim$T2     <- sim$T1_m2 + sim$delta
+    sim$change <- sim$T2 - sim$T1_m1
+    c(
+      change_score = lm.beta(lm(change ~ X,      data = sim))["X"],
+      resid_noisy  = lm.beta(lm(T2 ~ X + T1_m1, data = sim))["X"],
+      resid_true   = lm.beta(lm(T2 ~ X + T1,    data = sim))["X"],
+      cor_m1_T1    = cor(sim$T1_m1, sim$T1),
+      cor_m2_T1    = cor(sim$T1_m2, sim$T1),
+      cor_m1_m2    = cor(sim$T1_m1, sim$T1_m2),
+      cor_m1_X     = cor(sim$T1_m1, sim$X),
+      cor_m2_X     = cor(sim$T1_m2, sim$X)
+    )
+  })
+  list(
+    beta = data.frame(
+      sd    = noise_sd,
+      model = beta_rows,
+      mean  = rowMeans(reps[beta_rows, ]),
+      se    = apply(reps[beta_rows, ], 1, function(x) sd(x)) / sqrt(n_reps)
+    ),
+    cors = data.frame(
+      sd   = noise_sd,
+      pair = cor_rows,
+      mean = rowMeans(reps[cor_rows, ]),
+      se   = apply(reps[cor_rows, ], 1, function(x) sd(x)) / sqrt(n_reps)
+    )
+  )
+})
+
+plot_df <- do.call(rbind, lapply(sim_results, `[[`, "beta"))
+plot_df$model <- factor(plot_df$model,
+  levels = beta_rows,
+  labels = c("Change score", "Residualized (noisy Y1)", "Residualized (true T1)"))
+
+cor_df <- do.call(rbind, lapply(sim_results, `[[`, "cors"))
+```
+
+```{r plot, fig.width=8, fig.height=5}
+ggplot(plot_df, aes(x = sd, y = mean, color = model, fill = model)) +
+  geom_ribbon(aes(ymin = mean - 1.96 * se, ymax = mean + 1.96 * se),
+              alpha = 0.15, color = NA) +
+  geom_line(linewidth = 1) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey40") +
+  scale_color_manual(values = c("#2166ac", "#d73027", "#4dac26")) +
+  scale_fill_manual( values = c("#2166ac", "#d73027", "#4dac26")) +
+  labs(
+    x        = "SD of measurement noise",
+    y        = "Mean standardized β for X",
+    color    = NULL,
+    fill     = NULL,
+    title    = "Residualized change bias grows with measurement noise",
+    subtitle = sprintf("Monte Carlo: %d reps per noise level, n = %d, r(X, T1_true) = %.1f",
+                       n_reps, n, r)
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "top")
+```
+
+## Takeaway: Residualized change leads to false positives
+
+As measurement noise in the baseline construct increases, the residualized change model drifts away from zero despite there being no true effect. The change score and residualized change with the true (perfectly measured) $T_1$ remain unbiased throughout.
+
+This is the case when the following hold:
+
+1. Your parameter of interest is *change*
+2. X has a relationship with $T_1$ (this link can be broken through a natural experiment or an RCT)
+3. Imperfect measurement of $Y_1$ (essentially all human outcomes)
+
+To have your cake and eat it too the only solution I am aware of is the multiple indicator latent change score model with strict measurement invariance. [Here](https://pmc.ncbi.nlm.nih.gov/articles/PMC6614039/) is a great tutorial paper! Of course, if you have more than two timepoints you can get a better slope estimate using longitudinal mixed effects modeling or latent growth curve modeling ([tutorial link](https://www.njudd.com/assignment_workshop_lgms)).
+
+::: {.callout-note collapse="true"}
+## Bonus plots on relationships between error and the vars
+
+```{r plot-cors-T1, fig.width=8, fig.height=5}
+cor_df |>
+  filter(pair %in% c("cor_m1_T1", "cor_m2_T1", "cor_m1_m2")) |>
+  mutate(pair = factor(pair,
+    levels = c("cor_m1_T1", "cor_m2_T1", "cor_m1_m2"),
+    labels = c("Y1,m1 & T1 (true)", "Y1,m2 & T1 (true)", "Y1,m1 & Y1,m2"))) |>
+  ggplot(aes(x = sd, y = mean, color = pair, fill = pair)) +
+  geom_ribbon(aes(ymin = mean - 1.96 * se, ymax = mean + 1.96 * se),
+              alpha = 0.15, color = NA) +
+  geom_line(linewidth = 1) +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_color_manual(values = c("#1b7837", "#762a83", "#e08214")) +
+  scale_fill_manual(values = c("#1b7837", "#762a83", "#e08214")) +
+  labs(
+    x        = "SD of measurement noise",
+    y        = "Mean correlation",
+    color    = NULL, fill = NULL,
+    title    = "Correlations with true T1 degrade with measurement noise",
+    subtitle = sprintf("Monte Carlo: %d reps per noise level, n = %d", n_reps, n)
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "top")
+```
+
+```{r plot-cors-X, fig.width=8, fig.height=5}
+cor_df |>
+  filter(pair %in% c("cor_m1_X", "cor_m2_X")) |>
+  mutate(pair = factor(pair,
+    levels = c("cor_m1_X", "cor_m2_X"),
+    labels = c("Y1,m1 & X", "Y1,m2 & X"))) |>
+  ggplot(aes(x = sd, y = mean, color = pair, fill = pair)) +
+  geom_ribbon(aes(ymin = mean - 1.96 * se, ymax = mean + 1.96 * se),
+              alpha = 0.15, color = NA) +
+  geom_line(linewidth = 1) +
+  geom_hline(yintercept = r, linetype = "dashed", color = "grey40") +
+  annotate("text", x = max(sd_range) * 0.85, y = r + 0.03,
+           label = sprintf("true r(T1_true, X) = %.1f", r), color = "grey40", size = 3.5) +
+  scale_y_continuous(limits = c(0, NA)) +
+  scale_color_manual(values = c("#d6604d", "#4393c3")) +
+  scale_fill_manual( values = c("#d6604d", "#4393c3")) +
+  labs(
+    x        = "SD of measurement noise",
+    y        = "Mean correlation with X",
+    color    = NULL, fill = NULL,
+    title    = "Measurement noise attenuates the Y1–X correlation",
+    subtitle = sprintf("Monte Carlo: %d reps per noise level, n = %d", n_reps, n)
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "top")
+```
+
+:::
